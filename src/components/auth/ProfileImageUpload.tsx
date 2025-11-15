@@ -37,13 +37,13 @@ export const ProfileImageUpload = ({ value, onChange, disabled }: ProfileImageUp
       const filePath = `temp/${fileName}`;
 
       const { error: uploadError, data } = await supabase.storage
-        .from("listings")
+        .from("avatars")
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from("listings")
+        .from("avatars")
         .getPublicUrl(filePath);
 
       onChange(publicUrl);
