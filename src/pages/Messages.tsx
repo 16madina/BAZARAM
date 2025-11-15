@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -28,12 +29,21 @@ const Messages = () => {
     },
   });
 
+  const { markConversationAsRead } = useUnreadMessages(user?.id);
+
   useEffect(() => {
     const convId = searchParams.get("conversation");
     if (convId) {
       setSelectedConversationId(convId);
     }
   }, [searchParams]);
+
+  // Marquer les messages comme lus quand on sélectionne une conversation
+  useEffect(() => {
+    if (selectedConversationId && user?.id) {
+      markConversationAsRead(selectedConversationId);
+    }
+  }, [selectedConversationId, user?.id, markConversationAsRead]);
 
   if (!user) return null;
 
