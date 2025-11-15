@@ -431,7 +431,12 @@ export const ChatWindow = ({ conversationId, userId }: ChatWindowProps) => {
                   </Avatar>
                   <div className={`flex flex-col ${isMine ? "items-end" : ""} max-w-md`}>
                     {msg.message_type === 'price_offer' ? (
-                      <PriceOfferCard messageId={msg.id} userId={userId} />
+                      <PriceOfferCard 
+                        messageId={msg.id} 
+                        userId={userId}
+                        conversationId={conversationId}
+                        listingId={conversation?.listing_id || msg.listing_id}
+                      />
                     ) : msg.message_type === 'image' ? (
                       <div className="space-y-1">
                         <img 
