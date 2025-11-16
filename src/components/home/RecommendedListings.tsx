@@ -149,13 +149,10 @@ const RecommendedListings = () => {
                 </div>
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+                <h3 className="font-semibold text-lg mb-2 line-clamp-1">
                   {listing.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-2 line-clamp-1">
-                  {listing.categories?.name}
-                </p>
-                <p className="text-xl font-bold text-primary">
+                <p className="text-lg font-bold text-primary">
                   {formatPriceWithConversion(listing.price, listing.currency || "FCFA", userProfile?.currency || "FCFA")}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">

@@ -107,15 +107,6 @@ const RecentListings = () => {
       );
     }
     
-    // 2. Priorité: Catégorie (si moins de 2 badges)
-    if (badges.length < 2 && listing.categories?.name) {
-      badges.push(
-        <Badge key="category" variant="secondary" className="backdrop-blur-sm text-xs font-medium">
-          {listing.categories.name}
-        </Badge>
-      );
-    }
-    
     // Note: Badge proximité supprimé car toutes les annonces affichées sont déjà locales
     // (filtrées par ville/pays), donc "À proximité" perd son sens
     
@@ -157,7 +148,7 @@ const RecentListings = () => {
         <h3 className="font-semibold text-lg mb-2 line-clamp-2 leading-tight">
           {listing.title}
         </h3>
-        <p className="font-bold text-primary text-xl mb-2">
+        <p className="font-bold text-primary text-lg mb-2">
           {listing.price === 0 ? (
             <span className="text-green-600">
               {formatPriceWithConversion(0, listing.currency || "FCFA", userProfile?.currency || "FCFA")}
