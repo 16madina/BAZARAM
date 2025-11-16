@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import BottomNav from "@/components/BottomNav";
 import { toast } from "sonner";
 import { useDarkMode } from "@/hooks/useDarkMode";
@@ -12,11 +14,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   User,
   Heart,
-  Bookmark,
   Star,
   UserCircle,
   Share2,
-  Settings as SettingsIcon,
   Bell,
   FileText,
   Shield,
@@ -26,9 +26,24 @@ import {
   Palette,
   LogOut,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Lock,
+  Fingerprint,
+  Key,
+  Database,
+  Trash2,
+  Eye,
+  UserX,
+  CreditCard,
+  Receipt,
+  MessageCircle,
+  Smartphone,
+  Mail,
+  CheckCircle,
+  Sun,
+  Moon
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
 
 const Settings = () => {
@@ -116,246 +131,412 @@ const Settings = () => {
     }
   };
 
-  const SettingItem = ({ icon: Icon, label, onClick, highlight = false }: any) => (
+  const SettingSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className="mb-6">
+      <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 mb-2">
+        {title}
+      </h3>
+      <Card className="overflow-hidden">
+        {children}
+      </Card>
+    </div>
+  );
+
+  const SettingItem = ({ 
+    icon: Icon, 
+    label, 
+    onClick, 
+    iconColor = "bg-muted", 
+    iconTextColor = "text-foreground",
+    rightElement,
+    showChevron = true 
+  }: any) => (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors ${
-        highlight ? "bg-orange-100/80 hover:bg-orange-100" : ""
-      }`}
+      className="w-full flex items-center justify-between p-4 hover:bg-accent/50 transition-all active:scale-[0.98]"
     >
       <div className="flex items-center gap-3">
-        <Icon className={`h-5 w-5 ${highlight ? "text-orange-600" : "text-muted-foreground"}`} />
-        <span className={highlight ? "font-medium" : ""}>{label}</span>
+        <div className={`${iconColor} ${iconTextColor} p-2 rounded-xl`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        <span className="text-sm font-medium">{label}</span>
       </div>
-      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+      <div className="flex items-center gap-2">
+        {rightElement}
+        {showChevron && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
+      </div>
     </button>
   );
 
-  return (
-    <div className="min-h-screen pb-24 bg-background">
-      {/* Header */}
-      <div className="bg-background border-b sticky top-0 z-10">
-        <div className="flex items-center justify-between p-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg" />
-            <span className="font-bold text-xl">ReVivo</span>
-          </div>
-          <div className="w-10" /> {/* Spacer */}
+  const SettingToggle = ({ 
+    icon: Icon, 
+    label, 
+    checked, 
+    onCheckedChange,
+    iconColor = "bg-muted",
+    iconTextColor = "text-foreground"
+  }: any) => (
+    <div className="flex items-center justify-between p-4">
+      <div className="flex items-center gap-3">
+        <div className={`${iconColor} ${iconTextColor} p-2 rounded-xl`}>
+          <Icon className="h-5 w-5" />
         </div>
+        <Label htmlFor={label} className="text-sm font-medium cursor-pointer">{label}</Label>
+      </div>
+      <Switch id={label} checked={checked} onCheckedChange={onCheckedChange} />
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="rounded-full"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-lg font-semibold">Paramètres</h1>
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Quick Links */}
-        <Card className="overflow-hidden">
-          <SettingItem
-            icon={User}
-            label="Ma page publique"
-            onClick={() => userId ? navigate(`/seller/${userId}`) : navigate("/auth")}
-          />
-        </Card>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="overflow-hidden">
-            <button
-              onClick={() => navigate("/favorites")}
-              className="w-full flex items-center justify-between p-4 hover:bg-muted/50"
-            >
-              <div className="flex items-center gap-3">
-                <Heart className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm">Favoris</span>
-              </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </Card>
-          
-          <Card className="overflow-hidden">
-            <button
-              onClick={() => toast.info("Fonctionnalité à venir")}
-              className="w-full flex items-center justify-between p-4 hover:bg-muted/50"
-            >
-              <div className="flex items-center gap-3">
-                <Bookmark className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm">Recherches sauvegardées</span>
-              </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </Card>
-        </div>
-
-        <Card className="overflow-hidden">
-          <SettingItem
-            icon={Star}
-            label="Mes avis"
-            onClick={() => toast.info("Fonctionnalité à venir")}
-          />
-        </Card>
-
-        {/* Détails du profil */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-1">Détails du profil</h2>
-          <Card className="overflow-hidden">
-            <SettingItem
-              icon={UserCircle}
-              label="Détails personnels"
-              onClick={() => navigate("/edit-profile")}
-              highlight={true}
-            />
-            <div className="border-t" />
-            <SettingItem
-              icon={Share2}
-              label="Partager ReVivo"
-              onClick={handleShare}
-            />
-          </Card>
-        </div>
-
-        {/* Paramètres du compte */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-1">Paramètres du compte</h2>
-          <Card className="overflow-hidden">
-            <SettingItem
-              icon={SettingsIcon}
-              label="Gérer le compte"
+        {/* Compte */}
+        <SettingSection title="Compte">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={Mail} 
+              label="Email" 
               onClick={() => navigate("/account-management")}
+              iconColor="bg-blue-500/10"
+              iconTextColor="text-blue-600"
             />
-            <div className="border-t" />
-            <SettingItem
-              icon={Bell}
-              label="Préférences de notifications"
-              onClick={() => setNotificationDialogOpen(true)}
+            <Separator />
+            <SettingItem 
+              icon={Smartphone} 
+              label="Téléphone" 
+              onClick={() => navigate("/account-management")}
+              iconColor="bg-green-500/10"
+              iconTextColor="text-green-600"
             />
-          </Card>
-        </div>
+            <Separator />
+            <SettingItem 
+              icon={CheckCircle} 
+              label="Vérification du compte" 
+              onClick={() => navigate("/account-management")}
+              iconColor="bg-purple-500/10"
+              iconTextColor="text-purple-600"
+            />
+          </CardContent>
+        </SettingSection>
 
-        {/* Informations générales */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-1">Informations générales</h2>
-          <Card className="overflow-hidden">
-            <SettingItem
-              icon={FileText}
-              label="Conditions d'utilisation"
-              onClick={() => navigate("/auth?view=terms")}
+        {/* Sécurité et Confidentialité */}
+        <SettingSection title="Sécurité et Confidentialité">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={Fingerprint} 
+              label="Face ID / Touch ID" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-red-500/10"
+              iconTextColor="text-red-600"
             />
-            <div className="border-t" />
-            <SettingItem
-              icon={Shield}
-              label="Politique de confidentialité"
-              onClick={() => navigate("/auth?view=privacy")}
+            <Separator />
+            <SettingItem 
+              icon={Key} 
+              label="Mot de passe" 
+              onClick={() => navigate("/account-management")}
+              iconColor="bg-orange-500/10"
+              iconTextColor="text-orange-600"
             />
-            <div className="border-t" />
-            <SettingItem
-              icon={HelpCircle}
-              label="Aide"
-              onClick={() => navigate("/help")}
+            <Separator />
+            <SettingItem 
+              icon={Shield} 
+              label="Authentification à deux facteurs" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-indigo-500/10"
+              iconTextColor="text-indigo-600"
             />
-          </Card>
-        </div>
+            <Separator />
+            <SettingItem 
+              icon={Eye} 
+              label="Qui peut voir mon profil" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-cyan-500/10"
+              iconTextColor="text-cyan-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={UserX} 
+              label="Utilisateurs bloqués" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-gray-500/10"
+              iconTextColor="text-gray-600"
+            />
+          </CardContent>
+        </SettingSection>
+
+        {/* Notifications */}
+        <SettingSection title="Notifications">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={MessageCircle} 
+              label="Messages" 
+              onClick={() => setNotificationDialogOpen(true)}
+              iconColor="bg-green-500/10"
+              iconTextColor="text-green-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Bell} 
+              label="Ventes et offres" 
+              onClick={() => setNotificationDialogOpen(true)}
+              iconColor="bg-yellow-500/10"
+              iconTextColor="text-yellow-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Star} 
+              label="Favoris et recommandations" 
+              onClick={() => setNotificationDialogOpen(true)}
+              iconColor="bg-pink-500/10"
+              iconTextColor="text-pink-600"
+            />
+          </CardContent>
+        </SettingSection>
+
+        {/* Paiements */}
+        <SettingSection title="Paiements">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={CreditCard} 
+              label="Méthodes de paiement" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-blue-500/10"
+              iconTextColor="text-blue-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Receipt} 
+              label="Historique et facturation" 
+              onClick={() => toast.info("Fonctionnalité bientôt disponible")}
+              iconColor="bg-purple-500/10"
+              iconTextColor="text-purple-600"
+            />
+          </CardContent>
+        </SettingSection>
+
+        {/* Apparence */}
+        <SettingSection title="Apparence">
+          <CardContent className="p-0">
+            <SettingToggle
+              icon={darkMode ? Moon : Sun}
+              label="Mode sombre"
+              checked={darkMode}
+              onCheckedChange={handleToggleDarkMode}
+              iconColor={darkMode ? "bg-indigo-500/10" : "bg-yellow-500/10"}
+              iconTextColor={darkMode ? "text-indigo-600" : "text-yellow-600"}
+            />
+            <Separator />
+            <SettingItem 
+              icon={Palette} 
+              label="Thème de l'application" 
+              onClick={() => toast.info("Auto / Clair / Sombre")}
+              iconColor="bg-pink-500/10"
+              iconTextColor="text-pink-600"
+              rightElement={<span className="text-sm text-muted-foreground">Auto</span>}
+            />
+          </CardContent>
+        </SettingSection>
+
+        {/* Stockage et données */}
+        <SettingSection title="Stockage et données">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={Database} 
+              label="Gérer le stockage" 
+              onClick={() => toast.info("Cache: 45 MB")}
+              iconColor="bg-teal-500/10"
+              iconTextColor="text-teal-600"
+              rightElement={<span className="text-sm text-muted-foreground">45 MB</span>}
+            />
+            <Separator />
+            <SettingItem 
+              icon={Trash2} 
+              label="Vider le cache" 
+              onClick={() => toast.success("Cache vidé avec succès")}
+              iconColor="bg-red-500/10"
+              iconTextColor="text-red-600"
+            />
+          </CardContent>
+        </SettingSection>
 
         {/* Paramètres régionaux */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-1">Paramètres régionaux</h2>
-          <Card className="p-4 space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-muted-foreground" />
-                <span className="font-medium">{t('settings.language')}</span>
+        <SettingSection title="Région et langue">
+          <CardContent className="p-0">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-500/10 text-blue-600 p-2 rounded-xl">
+                    <Globe className="h-5 w-5" />
+                  </div>
+                  <Label className="text-sm font-medium">Langue</Label>
+                </div>
+                <Select value={language} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fr">Français</SelectItem>
+                    <SelectItem value="en">English</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <p className="text-sm text-muted-foreground">{t('settings.language_description')}</p>
-              <Select value={language} onValueChange={handleLanguageChange}>
-                <SelectTrigger>
-                  <SelectValue>
-                    <div className="flex items-center gap-2">
-                      <span>{language === 'fr' ? '🇫🇷' : '🇬🇧'}</span>
-                      <span>{language === 'fr' ? 'Français' : 'English'}</span>
-                    </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fr">
-                    <div className="flex items-center gap-2">
-                      <span>🇫🇷</span>
-                      <span>Français</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="en">
-                    <div className="flex items-center gap-2">
-                      <span>🇬🇧</span>
-                      <span>English</span>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-muted-foreground" />
-                <span className="font-medium">Devise</span>
+              
+              <Separator className="my-4" />
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-green-500/10 text-green-600 p-2 rounded-xl">
+                    <DollarSign className="h-5 w-5" />
+                  </div>
+                  <Label className="text-sm font-medium">Devise</Label>
+                </div>
+                <Select 
+                  value={userProfile?.currency || "FCFA"} 
+                  onValueChange={handleCurrencyChange}
+                >
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FCFA">FCFA</SelectItem>
+                    <SelectItem value="GHS">GHS</SelectItem>
+                    <SelectItem value="NGN">NGN</SelectItem>
+                    <SelectItem value="GMD">GMD</SelectItem>
+                    <SelectItem value="GNF">GNF</SelectItem>
+                    <SelectItem value="LRD">LRD</SelectItem>
+                    <SelectItem value="SLL">SLL</SelectItem>
+                    <SelectItem value="CVE">CVE</SelectItem>
+                    <SelectItem value="MRU">MRU</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <p className="text-sm text-muted-foreground">Choisissez votre devise préférée</p>
-              <Select 
-                value={userProfile?.currency || "FCFA"} 
-                onValueChange={handleCurrencyChange}
-                key={userProfile?.currency}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="FCFA">🇧🇯 FCFA - Franc CFA (Zone CEDEAO)</SelectItem>
-                  <SelectItem value="GHS">🇬🇭 GHS - Cedi ghanéen</SelectItem>
-                  <SelectItem value="NGN">🇳🇬 NGN - Naira nigérian</SelectItem>
-                  <SelectItem value="GMD">🇬🇲 GMD - Dalasi gambien</SelectItem>
-                  <SelectItem value="GNF">🇬🇳 GNF - Franc guinéen</SelectItem>
-                  <SelectItem value="LRD">🇱🇷 LRD - Dollar libérien</SelectItem>
-                  <SelectItem value="SLL">🇸🇱 SLL - Leone sierra-léonais</SelectItem>
-                  <SelectItem value="CVE">🇨🇻 CVE - Escudo cap-verdien</SelectItem>
-                  <SelectItem value="MRU">🇲🇷 MRU - Ouguiya mauritanien</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
-          </Card>
-        </div>
+          </CardContent>
+        </SettingSection>
 
-        {/* Paramètres d'affichage */}
-        <div className="space-y-2">
-          <h2 className="text-sm font-semibold text-muted-foreground px-1">Paramètres d'affichage</h2>
-          <Card className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-muted-foreground" />
-                <span className="font-medium">Mode sombre</span>
-              </div>
-              <Switch checked={darkMode} onCheckedChange={handleToggleDarkMode} />
-            </div>
-          </Card>
-        </div>
+        {/* Profil */}
+        <SettingSection title="Profil">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={User} 
+              label="Ma page publique" 
+              onClick={() => navigate("/profile")}
+              iconColor="bg-purple-500/10"
+              iconTextColor="text-purple-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={UserCircle} 
+              label="Modifier mon profil" 
+              onClick={() => navigate("/edit-profile")}
+              iconColor="bg-blue-500/10"
+              iconTextColor="text-blue-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Heart} 
+              label="Mes favoris" 
+              onClick={() => navigate("/favorites")}
+              iconColor="bg-red-500/10"
+              iconTextColor="text-red-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Share2} 
+              label="Partager l'application" 
+              onClick={handleShare}
+              iconColor="bg-cyan-500/10"
+              iconTextColor="text-cyan-600"
+            />
+          </CardContent>
+        </SettingSection>
 
-        {/* Logout */}
-        <Button
-          variant="ghost"
-          className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-5 w-5 mr-2" />
-          Se déconnecter
-        </Button>
+        {/* Centre d'aide */}
+        <SettingSection title="Centre d'aide">
+          <CardContent className="p-0">
+            <SettingItem 
+              icon={HelpCircle} 
+              label="FAQ" 
+              onClick={() => navigate("/help")}
+              iconColor="bg-indigo-500/10"
+              iconTextColor="text-indigo-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={MessageCircle} 
+              label="Contacter le support" 
+              onClick={() => navigate("/help")}
+              iconColor="bg-green-500/10"
+              iconTextColor="text-green-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Shield} 
+              label="Signaler un problème" 
+              onClick={() => navigate("/help")}
+              iconColor="bg-orange-500/10"
+              iconTextColor="text-orange-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={FileText} 
+              label="Conditions générales" 
+              onClick={() => navigate("/help")}
+              iconColor="bg-gray-500/10"
+              iconTextColor="text-gray-600"
+            />
+            <Separator />
+            <SettingItem 
+              icon={Lock} 
+              label="Politique de confidentialité" 
+              onClick={() => navigate("/help")}
+              iconColor="bg-gray-500/10"
+              iconTextColor="text-gray-600"
+            />
+          </CardContent>
+        </SettingSection>
 
-        {/* Version */}
-        <div className="text-center text-sm text-muted-foreground py-4">
-          Version 19.70.1
+        {/* Déconnexion */}
+        <SettingSection title="">
+          <CardContent className="p-0">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center gap-3 p-4 text-destructive hover:bg-destructive/10 transition-all active:scale-[0.98]"
+            >
+              <LogOut className="h-5 w-5" />
+              <span className="text-sm font-semibold">Se déconnecter</span>
+            </button>
+          </CardContent>
+        </SettingSection>
+
+        <div className="text-center py-4 space-y-1">
+          <p className="text-xs text-muted-foreground">Version 1.0.0</p>
+          <Button 
+            variant="link" 
+            size="sm" 
+            className="text-xs"
+            onClick={() => toast.info("Vous utilisez la dernière version")}
+          >
+            Rechercher des mises à jour
+          </Button>
         </div>
       </div>
 
-      <NotificationSettings 
-        open={notificationDialogOpen} 
+      <NotificationSettings
+        open={notificationDialogOpen}
         onOpenChange={setNotificationDialogOpen}
       />
 
