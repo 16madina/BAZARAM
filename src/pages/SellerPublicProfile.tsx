@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Star, Shield, TrendingUp, Users, ArrowLeft, Package, CheckCircle, X } from "lucide-react";
 import { FollowButton } from "@/components/profile/FollowButton";
 import { ReviewCard } from "@/components/profile/ReviewCard";
+import { SellerBadges } from "@/components/profile/SellerBadges";
 import { useState, useEffect } from "react";
 import BottomNav from "@/components/BottomNav";
 
@@ -116,14 +117,9 @@ const SellerPublicProfile = () => {
                 )}
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex flex-col gap-2 mb-1">
                   <h2 className="font-bold text-2xl">{profile.full_name || "Utilisateur"}</h2>
-                  {profile.email_verified && (
-                    <Badge variant="default" className="flex items-center gap-1 bg-green-600 hover:bg-green-700">
-                      <Shield className="h-3 w-3" />
-                      Vérifié
-                    </Badge>
-                  )}
+                  <SellerBadges profile={profile} size="md" />
                 </div>
                 {(profile.city || profile.country) && (
                   <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">

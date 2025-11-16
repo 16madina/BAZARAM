@@ -34,6 +34,7 @@ import BlockedUsers from "./pages/settings/BlockedUsers";
 import SalesHistory from "./pages/settings/SalesHistory";
 import CommunityGuidelines from "./pages/settings/CommunityGuidelines";
 import Transactions from "./pages/Transactions";
+import SellerBadgesInfo from "./pages/settings/SellerBadges";
 
 import TestCamera from "./pages/TestCamera";
 import AdminPerformance from "./pages/AdminPerformance";
@@ -83,6 +84,7 @@ const App = () => {
           <Route path="/settings/blocked-users" element={<BlockedUsers />} />
           <Route path="/settings/sales-history" element={<SalesHistory />} />
           <Route path="/settings/community-guidelines" element={<CommunityGuidelines />} />
+          <Route path="/settings/seller-badges" element={<SellerBadgesInfo />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/test-camera" element={<TestCamera />} />
           <Route path="/admin/performance" element={<AdminPerformance />} />

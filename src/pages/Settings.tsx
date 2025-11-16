@@ -508,8 +508,16 @@ const Settings = () => {
             />
             <Separator />
             <SettingItem 
+              icon={Star} 
+              label="Badges vendeurs" 
+              onClick={() => navigate("/settings/seller-badges")}
+              iconColor="bg-yellow-500/10"
+              iconTextColor="text-yellow-600"
+            />
+            <Separator />
+            <SettingItem 
               icon={MessageCircle} 
-              label="Contacter le support" 
+              label="Contacter le support"
               onClick={() => navigate("/settings/support")}
               iconColor="bg-green-500/10"
               iconTextColor="text-green-600"
