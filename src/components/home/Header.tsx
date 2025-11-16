@@ -34,7 +34,7 @@ const Header = ({ isAuthenticated }: HeaderProps) => {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-primary">Revivo</h1>
+          <h1 className="text-2xl font-bold text-primary">DJASSA</h1>
         </div>
 
         <nav className="flex items-center gap-3">

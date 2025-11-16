@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M100 20 C 144.183 20 180 55.817 180 100 L 180 100" stroke="#ea384c" stroke-width="18" stroke-linecap="round" fill="none"/>
+  <path d="M100 180 C 55.817 180 20 144.183 20 100 L 20 100" stroke="#ea384c" stroke-width="18" stroke-linecap="round" fill="none"/>
+  
+  <!-- Flèche haut -->
+  <path d="M 165 80 L 180 100 L 195 80" fill="#ea384c"/>
+  
+  <!-- Flèche bas -->
+  <path d="M 35 120 L 20 100 L 5 120" fill="#ea384c"/>
+</svg>
