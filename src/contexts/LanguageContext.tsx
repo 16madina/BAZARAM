@@ -91,9 +91,9 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.settings": "Paramètres",
     
     // Hero section
-    "hero.title": "Bienvenue sur Revivo",
-    "hero.subtitle": "Achetez et vendez en toute confiance",
-    "hero.search_placeholder": "Rechercher des articles...",
+    "hero.title": "Bienvenue sur DJASSA",
+    "hero.subtitle": "Donnez une seconde vie à vos articles",
+    "hero.search_placeholder": "Rechercher un article de seconde vie...",
     "hero.search_button": "Rechercher",
     
     // Categories
@@ -241,9 +241,9 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.settings": "Settings",
     
     // Hero section
-    "hero.title": "Welcome to Revivo",
-    "hero.subtitle": "Buy and sell with confidence",
-    "hero.search_placeholder": "Search for items...",
+    "hero.title": "Welcome to DJASSA",
+    "hero.subtitle": "Give your items a second life",
+    "hero.search_placeholder": "Search for a second-life item...",
     "hero.search_button": "Search",
     
     // Categories

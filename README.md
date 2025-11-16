@@ -1,4 +1,24 @@
-# Welcome to your Lovable project
+# DJASSA - Marketplace de seconde vie
+
+**DJASSA** est le marketplace de référence en Afrique de l'Ouest dédié à l'économie circulaire. Notre mission : donner une seconde vie à vos articles.
+
+## À propos
+
+DJASSA facilite l'achat et la vente d'articles d'occasion en mettant l'accent sur :
+- 🔄 L'économie circulaire
+- ♻️ La seconde vie des objets
+- 🌍 Le développement durable
+- 🤝 La communauté et l'entraide
+
+## Fonctionnalités
+
+- Publication gratuite d'annonces
+- Messagerie instantanée
+- Système de favoris
+- Filtres de recherche avancés
+- Notifications en temps réel
+- Support multi-langues (FR/EN)
+- Mode sombre
 
 ## Project info
 
@@ -59,15 +79,24 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Supabase (via Lovable Cloud)
 
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/fdde6a57-c0ea-45b0-bd6d-4e42d3d22471) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain?
 
 Yes, you can!
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Contact
+
+Pour toute question : support@djassa.com
+
+---
+
+Développé avec ❤️ pour promouvoir l'économie circulaire en Afrique.
