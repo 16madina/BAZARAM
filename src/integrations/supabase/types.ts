@@ -540,6 +540,7 @@ export type Database = {
           created_at: string
           currency: string | null
           email_verified: boolean | null
+          fast_responder: boolean | null
           first_name: string | null
           followers_count: number | null
           full_name: string | null
@@ -555,6 +556,7 @@ export type Database = {
           rating_average: number | null
           rating_count: number | null
           response_rate: number | null
+          star_seller: boolean | null
           total_sales: number | null
           typing_in_conversation: string | null
           updated_at: string
@@ -571,6 +573,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           email_verified?: boolean | null
+          fast_responder?: boolean | null
           first_name?: string | null
           followers_count?: number | null
           full_name?: string | null
@@ -586,6 +589,7 @@ export type Database = {
           rating_average?: number | null
           rating_count?: number | null
           response_rate?: number | null
+          star_seller?: boolean | null
           total_sales?: number | null
           typing_in_conversation?: string | null
           updated_at?: string
@@ -602,6 +606,7 @@ export type Database = {
           created_at?: string
           currency?: string | null
           email_verified?: boolean | null
+          fast_responder?: boolean | null
           first_name?: string | null
           followers_count?: number | null
           full_name?: string | null
@@ -617,6 +622,7 @@ export type Database = {
           rating_average?: number | null
           rating_count?: number | null
           response_rate?: number | null
+          star_seller?: boolean | null
           total_sales?: number | null
           typing_in_conversation?: string | null
           updated_at?: string

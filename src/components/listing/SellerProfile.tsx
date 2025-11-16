@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { FollowButton } from "@/components/profile/FollowButton";
+import { SellerBadges } from "@/components/profile/SellerBadges";
 import { useState, useEffect } from "react";
 
 interface SellerProfileProps {
@@ -81,25 +82,9 @@ export const SellerProfile = ({ userId }: SellerProfileProps) => {
             )}
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex flex-col gap-2 mb-1">
               <h3 className="font-semibold text-lg">{profile.full_name || "Utilisateur"}</h3>
-          {profile.email_verified && (
-            <Badge variant="default" className="flex items-center gap-1 bg-green-600 hover:bg-green-700">
-              <Shield className="h-3 w-3" />
-              Vérifié
-            </Badge>
-          )}
-          {profile.total_sales === 0 && (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              Nouveau vendeur
-            </Badge>
-          )}
-          {profile.total_sales >= 10 && profile.rating_average >= 4.5 && (
-            <Badge className="flex items-center gap-1 bg-green-600">
-              <Star className="h-3 w-3" />
-              Vendeur fiable
-            </Badge>
-          )}
+              <SellerBadges profile={profile} size="sm" />
             </div>
             {profile.location && (
               <div className="flex items-center gap-1 text-sm text-muted-foreground">
