@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Star, Shield, TrendingUp, Users, ArrowLeft, Package } from "lucide-react";
+import { MapPin, Star, Shield, TrendingUp, Users, ArrowLeft, Package, CheckCircle, X } from "lucide-react";
 import { FollowButton } from "@/components/profile/FollowButton";
 import { ReviewCard } from "@/components/profile/ReviewCard";
 import { useState, useEffect } from "react";
@@ -98,12 +98,23 @@ const SellerPublicProfile = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-start gap-4 mb-6">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={profile.avatar_url || ""} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={profile.avatar_url || ""} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                {profile.email_verified ? (
+                  <div className="absolute bottom-0 right-0 h-6 w-6 rounded-full bg-green-500 flex items-center justify-center border-2 border-background">
+                    <CheckCircle className="h-4 w-4 text-white" />
+                  </div>
+                ) : (
+                  <div className="absolute bottom-0 right-0 h-6 w-6 rounded-full bg-red-500 flex items-center justify-center border-2 border-background">
+                    <X className="h-4 w-4 text-white" />
+                  </div>
+                )}
+              </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="font-bold text-2xl">{profile.full_name || "Utilisateur"}</h2>

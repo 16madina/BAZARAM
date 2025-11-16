@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Package, Star, Shield, TrendingUp, Clock, Users, MessageCircle, CheckCircle } from "lucide-react";
+import { MapPin, Package, Star, Shield, TrendingUp, Clock, Users, MessageCircle, CheckCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -63,12 +63,23 @@ export const SellerProfile = ({ userId }: SellerProfileProps) => {
     <Card>
       <CardContent className="p-6 space-y-6">
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={profile.avatar_url || ""} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={profile.avatar_url || ""} />
+              <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            {profile.email_verified ? (
+              <div className="absolute bottom-0 right-0 h-5 w-5 rounded-full bg-green-500 flex items-center justify-center border-2 border-background">
+                <CheckCircle className="h-3 w-3 text-white" />
+              </div>
+            ) : (
+              <div className="absolute bottom-0 right-0 h-5 w-5 rounded-full bg-red-500 flex items-center justify-center border-2 border-background">
+                <X className="h-3 w-3 text-white" />
+              </div>
+            )}
+          </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold text-lg">{profile.full_name || "Utilisateur"}</h3>
