@@ -10,7 +10,8 @@ import BottomNav from "@/components/BottomNav";
 import { UserListingCard } from "@/components/profile/UserListingCard";
 import { ReviewCard } from "@/components/profile/ReviewCard";
 import { toast } from "sonner";
-import { LogOut, Edit, Settings, Shield, Bell, Share2, ArrowLeft, Users, Star, MapPin, Calendar, Package, TrendingUp, Award, Heart, Receipt, CheckCircle2 } from "lucide-react";
+import { LogOut, Edit, Settings, Shield, Bell, Share2, ArrowLeft, Users, Star, MapPin, Calendar, Package, TrendingUp, Award, Heart, Receipt, CheckCircle2, X, Mail, CheckCircle } from "lucide-react";
+import { toast as toastHook } from "@/hooks/use-toast";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -175,6 +176,43 @@ const Profile = () => {
     enabled: !!user,
   });
 
+  const handleSendVerificationEmail = async () => {
+    try {
+      if (!user?.email) {
+        toastHook({
+          title: "Erreur",
+          description: "Impossible de récupérer votre email",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const confirmationUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.functions.invoke('send-verification-email', {
+        body: {
+          email: user.email,
+          confirmationUrl,
+          userName: profile?.full_name || "utilisateur",
+        },
+      });
+
+      if (error) throw error;
+
+      toastHook({
+        title: "Email envoyé",
+        description: "Vérifiez votre boîte de réception pour confirmer votre email",
+      });
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      toastHook({
+        title: "Erreur",
+        description: "Impossible d'envoyer l'email de vérification",
+        variant: "destructive",
+      });
+    }
+  };
+
   const { data: transactions } = useQuery({
     queryKey: ["user-transactions", user?.id],
     queryFn: async () => {
@@ -272,9 +310,13 @@ const Profile = () => {
                 </div>
             )}
           </div>
-          {profile?.email_verified && (
+          {profile?.email_verified ? (
             <div className="absolute bottom-1 right-1 bg-green-600 rounded-full p-1 border-2 border-background">
               <CheckCircle2 className="h-5 w-5 text-white" />
+            </div>
+          ) : (
+            <div className="absolute bottom-1 right-1 bg-red-500 rounded-full p-1 border-2 border-background">
+              <X className="h-5 w-5 text-white" />
             </div>
           )}
         </div>
@@ -286,7 +328,20 @@ const Profile = () => {
         {/* Name and Location */}
         <div className="text-center space-y-2 animate-fade-in">
           <h1 className="text-3xl font-bold">{fullName}</h1>
-          <p className="text-muted-foreground text-sm">{user?.email}</p>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-muted-foreground text-sm">{user?.email}</p>
+            {!profile?.email_verified && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSendVerificationEmail}
+                className="gap-2"
+              >
+                <Mail className="h-4 w-4" />
+                Vérifier mon compte
+              </Button>
+            )}
+          </div>
           {(profile?.city || profile?.country) && (
             <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
