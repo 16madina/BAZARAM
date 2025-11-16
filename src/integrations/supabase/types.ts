@@ -56,7 +56,6 @@ export type Database = {
           icon: string
           id: string
           name: string
-          parent_id: string | null
           slug: string
         }
         Insert: {
@@ -64,7 +63,6 @@ export type Database = {
           icon: string
           id?: string
           name: string
-          parent_id?: string | null
           slug: string
         }
         Update: {
@@ -72,18 +70,9 @@ export type Database = {
           icon?: string
           id?: string
           name?: string
-          parent_id?: string | null
           slug?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "categories_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       conversations: {
         Row: {
