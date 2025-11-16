@@ -1,7 +1,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-marketplace.jpg";
+import heroImage from "@/assets/hero-marketplace-new.jpg";
 import djassaLogo from "@/assets/djassa-hero-logo.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -18,7 +18,7 @@ const HeroSection = () => {
           backgroundSize: 'cover'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-background" />
       </div>
       
       <div className="relative h-full flex flex-col items-center justify-center px-4 text-center">
