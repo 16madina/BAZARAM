@@ -206,26 +206,37 @@ export const useUnreadMessages = (userId: string | undefined) => {
   }, [userId]);
 
   const markConversationAsRead = useCallback(async (conversationId: string) => {
-    if (!userId) return;
+    if (!userId) {
+      console.log('[markConversationAsRead] No userId provided');
+      return;
+    }
+
+    console.log('[markConversationAsRead] Marking messages as read for:', {
+      conversationId,
+      userId
+    });
 
     try {
       // Marquer les messages comme lus
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .update({ is_read: true })
         .eq('conversation_id', conversationId)
         .eq('receiver_id', userId)
-        .eq('is_read', false);
+        .eq('is_read', false)
+        .select();
 
       if (error) {
-        console.error('Error marking messages as read:', error);
+        console.error('[markConversationAsRead] Error:', error);
         throw error;
       }
+      
+      console.log('[markConversationAsRead] Successfully marked', data?.length || 0, 'messages as read');
       
       // Recharger le compteur complet pour être sûr de la synchronisation
       await refetchUnreadCount();
     } catch (error) {
-      console.error('Failed to mark conversation as read:', error);
+      console.error('[markConversationAsRead] Failed:', error);
     }
   }, [userId, refetchUnreadCount]);
 
