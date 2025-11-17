@@ -45,9 +45,9 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("User not found");
     }
 
-    // Use the origin from the request or fallback to production domain
-    const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'https://djassamarket.com';
-    const confirmationUrl = `${origin}/email-verified?userId=${user.id}`;
+    // Use the APP_URL environment variable for the confirmation URL
+    const appUrl = Deno.env.get("APP_URL") || 'https://djassamarket.com';
+    const confirmationUrl = `${appUrl}/email-verified?userId=${user.id}`;
 
     console.log("Confirmation URL:", confirmationUrl);
 
