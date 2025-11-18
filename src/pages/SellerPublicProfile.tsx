@@ -81,7 +81,7 @@ const SellerPublicProfile = () => {
 
   return (
     <div className="min-h-screen pb-20 bg-muted/30">
-      <div className="sticky top-0 z-40 bg-background border-b">
+      <div className="sticky top-0 z-40 bg-background border-b pt-safe">
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <Button
             variant="ghost"
