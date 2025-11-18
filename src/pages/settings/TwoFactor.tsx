@@ -57,7 +57,7 @@ const TwoFactor = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="sticky top-0 z-10 bg-background border-b">
+      <div className="sticky top-0 z-10 bg-background border-b pt-safe">
         <div className="flex items-center gap-4 p-4 max-w-screen-xl mx-auto">
           <Button
             variant="ghost"
