@@ -108,6 +108,34 @@ export const PublishTutorial = ({ active, onComplete }: PublishTutorialProps) =>
     onComplete();
   };
 
+  // Calculate optimal position to ensure tooltip is always visible
+  const getTooltipPosition = () => {
+    const tooltipHeight = 280; // Approximate tooltip height
+    const margin = 16;
+    const viewportHeight = window.innerHeight;
+    
+    let top: number;
+    
+    if (step.position === "bottom") {
+      const proposedTop = targetRect.bottom + 12;
+      // Check if tooltip would go off screen
+      if (proposedTop + tooltipHeight + margin > viewportHeight) {
+        // Position above the target instead
+        top = Math.max(margin, targetRect.top - tooltipHeight - 12);
+      } else {
+        top = proposedTop;
+      }
+    } else {
+      // Position above
+      top = Math.max(margin, targetRect.top - tooltipHeight - 12);
+    }
+    
+    // Ensure tooltip stays within viewport
+    top = Math.max(margin, Math.min(top, viewportHeight - tooltipHeight - margin));
+    
+    return top;
+  };
+
   return (
     <>
       {/* Overlay */}
@@ -134,10 +162,8 @@ export const PublishTutorial = ({ active, onComplete }: PublishTutorialProps) =>
       <div
         className="fixed z-50 animate-scale-in"
         style={{
-          top: step.position === "bottom" 
-            ? targetRect.bottom + 12
-            : targetRect.top - 200,
-          left: Math.min(targetRect.left, window.innerWidth - 340),
+          top: getTooltipPosition(),
+          left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 340)),
           maxWidth: "320px",
         }}
       >
