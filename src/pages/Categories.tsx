@@ -36,7 +36,8 @@ import servicesImg from "@/assets/categories/services.jpg";
 const categoryImages: Record<string, string> = {
   "electronique": electroniqueImg,
   "mode": vetementsEnfantsImg,
-  "vehicules": vehiculesImg,
+  "pieces-auto-main": piecesAutoImg,
+  "pieces-auto": piecesAutoImg,
   "maison": maisonCuisineImg,
   "maison-jardin": maisonCuisineImg,
   "loisirs": loisirsImg,
