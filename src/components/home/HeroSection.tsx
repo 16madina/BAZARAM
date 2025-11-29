@@ -5,19 +5,46 @@ import heroImage from "@/assets/hero-marketplace-new.jpg";
 import bazaramMarketLogo from "@/assets/bazaram-new-logo.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useHeroCarousel } from "@/hooks/useHeroCarousel";
+
 const HeroSection = () => {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  return <div className="relative h-[400px] md:h-[500px] overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-center" style={{
-      backgroundImage: `url(${heroImage})`,
-      backgroundPosition: 'center center',
-      backgroundSize: 'cover'
-    }}>
+  const { currentImage } = useHeroCarousel();
+  const [parallaxOffset, setParallaxOffset] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+  
+  // Effet parallaxe au scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroRef.current) {
+        const scrolled = window.scrollY;
+        const heroHeight = heroRef.current.offsetHeight;
+        
+        // Calculer l'offset parallaxe (mouvement subtil)
+        // Le hero bouge plus lentement que le scroll (effet parallaxe)
+        const offset = Math.min(scrolled * 0.5, heroHeight * 0.3);
+        setParallaxOffset(offset);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  return <div ref={heroRef} className="relative h-[400px] md:h-[500px] overflow-hidden">
+      {/* Image de fond avec effet parallaxe */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-transform duration-100 ease-out"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundPosition: 'center center',
+          backgroundSize: 'cover',
+          transform: `translateY(${parallaxOffset}px)`,
+        }}
+      >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/25 to-background" />
       </div>
       
