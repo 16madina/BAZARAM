@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copiez ce fichier vers : android/app/src/main/res/values/styles.xml
+  après avoir exécuté 'npx cap add android'
+-->
+<resources>
+    <!-- Thème principal sans ActionBar -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#ea384c</item>
+        <item name="colorPrimaryDark">#d62d41</item>
+        <item name="colorAccent">#ea384c</item>
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Thème de lancement SANS splash screen (fond blanc simple) -->
+    <style name="AppTheme.NoActionBarLaunch" parent="AppTheme">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+</resources>
