@@ -36,6 +36,7 @@ import ProfileVisibility from "./pages/settings/ProfileVisibility";
 import BlockedUsers from "./pages/settings/BlockedUsers";
 import SalesHistory from "./pages/settings/SalesHistory";
 import CommunityGuidelines from "./pages/settings/CommunityGuidelines";
+import ChildSafety from "./pages/settings/ChildSafety";
 import Transactions from "./pages/Transactions";
 import SellerBadgesInfo from "./pages/settings/SellerBadges";
 
@@ -114,6 +115,7 @@ const App = () => {
           <Route path="/settings/blocked-users" element={<BlockedUsers />} />
           <Route path="/settings/sales-history" element={<SalesHistory />} />
           <Route path="/settings/community-guidelines" element={<CommunityGuidelines />} />
+          <Route path="/settings/child-safety" element={<ChildSafety />} />
           <Route path="/settings/seller-badges" element={<SellerBadgesInfo />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/test-camera" element={<TestCamera />} />
