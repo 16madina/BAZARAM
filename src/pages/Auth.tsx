@@ -109,44 +109,8 @@ const Auth = () => {
     );
   };
 
-  // Détecter automatiquement la localisation de l'utilisateur
-  useEffect(() => {
-    if (isLogin) return; // Ne détecte que pour l'inscription
-
-    // Utiliser l'API de géolocalisation du navigateur
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            // Utiliser une API de reverse geocoding (OpenStreetMap Nominatim)
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
-            );
-            const data = await response.json();
-            
-            const detectedCity = data.address?.city || data.address?.town || data.address?.village || null;
-            const detectedCountry = data.address?.country || null;
-            
-            // Pré-remplir le pays si détecté
-            if (detectedCountry) {
-              const matchingCountry = allCountries.find(c => 
-                c.name.toLowerCase() === detectedCountry.toLowerCase()
-              );
-              if (matchingCountry) {
-                setCountry(matchingCountry.code);
-                setCity(detectedCity || "");
-              }
-            }
-          } catch (error) {
-            console.error('Error fetching location details:', error);
-          }
-        },
-        (error) => {
-          console.log('Geolocation permission denied or not available:', error);
-        }
-      );
-    }
-  }, [isLogin]);
+  // La détection de localisation est maintenant manuelle uniquement (bouton)
+  // pour éviter les blocages réseau au chargement de la page
 
   useEffect(() => {
     // Check if user is already logged in
@@ -517,6 +481,9 @@ const Auth = () => {
                   placeholder="exemple@email.com"
                   required
                   disabled={isLoading}
+                  inputMode="email"
+                  autoComplete={isLogin ? "email" : "email"}
+                  enterKeyHint="next"
                 />
               </div>
 
@@ -532,6 +499,8 @@ const Auth = () => {
                     required
                     disabled={isLoading}
                     minLength={6}
+                    autoComplete={isLogin ? "current-password" : "new-password"}
+                    enterKeyHint={isLogin ? "done" : "next"}
                   />
                   <Button
                     type="button"
