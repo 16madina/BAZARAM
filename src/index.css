@@ -3,19 +3,17 @@
 @tailwind utilities;
 
 /* Android WebView Input Fix - Critical for Capacitor */
+/* Minimal CSS to avoid reflows and compositor issues */
 input, textarea, select {
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  -webkit-touch-callout: default !important;
-  touch-action: manipulation !important;
-  caret-color: auto !important;
-  font-size: 16px !important;
+  font-size: 16px !important; /* Prevents iOS zoom */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-input:focus, textarea:focus, select:focus {
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  caret-color: auto !important;
+/* Force GPU layer for inputs to prevent jank */
+input:focus, textarea:focus {
+  transform: translateZ(0);
+  will-change: transform;
 }
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -113,39 +111,6 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 
-  /* Fix Android WebView input fields */
-  input,
-  textarea,
-  select {
-    -webkit-user-select: text !important;
-    user-select: text !important;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    font-size: 16px !important;
-    caret-color: auto !important;
-  }
-
-  input:focus,
-  textarea:focus,
-  select:focus {
-    -webkit-user-select: text !important;
-    user-select: text !important;
-    outline: none !important;
-  }
-  
-  /* Force text visibility on Android */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="tel"],
-  input[type="number"],
-  input[type="search"] {
-    color: inherit !important;
-    opacity: 1 !important;
-    -webkit-text-fill-color: currentcolor !important;
-  }
 
   /* Animations */
   @keyframes fade-in {
