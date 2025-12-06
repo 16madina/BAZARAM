@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHaptics } from "@/hooks/useHaptics";
+import { useWebPushNotifications } from "@/hooks/useWebPushNotifications";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import {
   User,
   Heart,
@@ -19,6 +21,8 @@ import {
   UserCircle,
   Share2,
   Bell,
+  BellOff,
+  BellRing,
   FileText,
   Shield,
   ShieldCheck,
@@ -59,6 +63,16 @@ const Settings = () => {
   const { language, setLanguage, t } = useLanguage();
   const { resetOnboarding } = useOnboarding();
   const haptics = useHaptics();
+  
+  // Notification hooks
+  const nativeNotifications = usePushNotifications();
+  const webNotifications = useWebPushNotifications();
+  const isNative = nativeNotifications.isNative;
+  const notificationsEnabled = isNative 
+    ? nativeNotifications.permissionStatus === 'granted'
+    : webNotifications.isPermissionGranted;
+  const notificationsLoading = webNotifications.isLoading;
+  
   const { 
     isAvailable: isBiometricAvailable,
     isEnabled: isBiometricEnabled, 
@@ -336,6 +350,46 @@ const Settings = () => {
         {/* Notifications */}
         <SettingSection title="Notifications">
           <CardContent className="p-0">
+            {/* État des notifications */}
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <div className={`${notificationsEnabled ? 'bg-green-500/10' : 'bg-red-500/10'} ${notificationsEnabled ? 'text-green-600' : 'text-red-600'} p-2 rounded-xl`}>
+                  {notificationsEnabled ? <BellRing className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}
+                </div>
+                <div>
+                  <span className="text-sm font-medium">
+                    {notificationsEnabled ? 'Notifications activées' : 'Notifications désactivées'}
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    {notificationsEnabled 
+                      ? 'Vous recevez les alertes' 
+                      : 'Activez pour recevoir les alertes'}
+                  </p>
+                </div>
+              </div>
+              {!notificationsEnabled && (
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    haptics.light();
+                    try {
+                      if (isNative) {
+                        await nativeNotifications.requestPermission();
+                      } else {
+                        await webNotifications.requestPermission();
+                      }
+                      toast.success("Notifications activées !");
+                    } catch (error) {
+                      toast.error("Impossible d'activer les notifications");
+                    }
+                  }}
+                  disabled={notificationsLoading}
+                >
+                  {notificationsLoading ? 'Activation...' : 'Activer'}
+                </Button>
+              )}
+            </div>
+            <Separator />
             <SettingItem 
               icon={MessageCircle} 
               label="Messages" 
@@ -358,17 +412,6 @@ const Settings = () => {
               onClick={() => setNotificationDialogOpen(true)}
               iconColor="bg-pink-500/10"
               iconTextColor="text-pink-600"
-            />
-            <Separator />
-            <SettingItem 
-              icon={Bell} 
-              label="Réactiver le prompt de notifications" 
-              onClick={() => {
-                localStorage.removeItem('ayoka_notification_prompt_seen');
-                toast.success("Prompt de notifications réactivé. Rechargez l'application pour le voir.");
-              }}
-              iconColor="bg-blue-500/10"
-              iconTextColor="text-blue-600"
             />
           </CardContent>
         </SettingSection>
