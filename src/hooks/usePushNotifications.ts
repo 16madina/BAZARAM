@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -28,7 +28,7 @@ export const usePushNotifications = () => {
       if (error) {
         console.error('Error saving push token:', error);
       } else {
-        console.log('Push token saved successfully to database');
+        console.log('Push token (FCM) saved successfully to database');
       }
     } catch (error) {
       console.error('Error saving push token:', error);
@@ -44,7 +44,7 @@ export const usePushNotifications = () => {
     const initializePushNotifications = async () => {
       try {
         // Vérifier le statut actuel des permissions
-        const permStatus = await PushNotifications.checkPermissions();
+        const permStatus = await FirebaseMessaging.checkPermissions();
         
         if (permStatus.receive === 'denied') {
           setPermissionStatus('denied');
@@ -53,7 +53,7 @@ export const usePushNotifications = () => {
 
         if (permStatus.receive === 'prompt') {
           // Demander la permission pour les notifications
-          const permission = await PushNotifications.requestPermissions();
+          const permission = await FirebaseMessaging.requestPermissions();
           
           if (permission.receive !== 'granted') {
             setPermissionStatus('denied');
@@ -63,77 +63,71 @@ export const usePushNotifications = () => {
 
         setPermissionStatus('granted');
 
-        // Écouter l'enregistrement réussi
-        await PushNotifications.addListener('registration', async (token: Token) => {
-          console.log(`Push registration success (${platform}), token:`, token.value);
-          setPushToken(token.value);
+        // Écouter les changements de token FCM
+        await FirebaseMessaging.addListener('tokenReceived', async (event) => {
+          console.log(`FCM Token received (${platform}):`, event.token);
+          setPushToken(event.token);
           setIsRegistered(true);
           
-          // Sauvegarder le token dans la base de données
-          await saveTokenToDatabase(token.value);
-        });
-
-        // Écouter les erreurs d'enregistrement
-        await PushNotifications.addListener('registrationError', (error: any) => {
-          console.error('Push registration error:', JSON.stringify(error));
-          setIsRegistered(false);
+          // Sauvegarder le token FCM dans la base de données
+          await saveTokenToDatabase(event.token);
         });
 
         // Écouter les notifications reçues (foreground)
-        await PushNotifications.addListener(
-          'pushNotificationReceived',
-          (notification: PushNotificationSchema) => {
-            console.log('Push notification received (foreground):', notification);
-            
-            toast({
-              title: notification.title || 'Nouvelle notification',
-              description: notification.body,
-            });
-          }
-        );
+        await FirebaseMessaging.addListener('notificationReceived', (event) => {
+          console.log('Push notification received (foreground):', event.notification);
+          
+          const notification = event.notification;
+          toast({
+            title: notification.title || 'Nouvelle notification',
+            description: notification.body,
+          });
+        });
 
         // Écouter les actions sur les notifications (background/killed)
-        await PushNotifications.addListener(
-          'pushNotificationActionPerformed',
-          (action: ActionPerformed) => {
-            console.log('Push notification action performed:', action);
-            
-            // Gérer la navigation en fonction de la notification
-            const data = action.notification.data as Record<string, string>;
-            if (data?.route) {
-              window.location.href = data.route;
-            } else if (data?.type) {
-              // Navigation basée sur le type de notification
-              switch (data.type) {
-                case 'message':
-                  window.location.href = data.conversationId 
-                    ? `/messages?conversation=${data.conversationId}` 
-                    : '/messages';
-                  break;
-                case 'offer':
-                case 'listing':
-                case 'like':
-                  if (data.listingId) {
-                    window.location.href = `/listing/${data.listingId}`;
-                  }
-                  break;
-                case 'payment':
-                  window.location.href = '/transactions';
-                  break;
-                case 'follower':
-                  window.location.href = data.userId 
-                    ? `/seller/${data.userId}` 
-                    : '/profile';
-                  break;
-                default:
-                  break;
-              }
+        await FirebaseMessaging.addListener('notificationActionPerformed', (event) => {
+          console.log('Push notification action performed:', event);
+          
+          // Gérer la navigation en fonction de la notification
+          const data = event.notification.data as Record<string, string>;
+          if (data?.route) {
+            window.location.href = data.route;
+          } else if (data?.type) {
+            // Navigation basée sur le type de notification
+            switch (data.type) {
+              case 'message':
+                window.location.href = data.conversationId 
+                  ? `/messages?conversation=${data.conversationId}` 
+                  : '/messages';
+                break;
+              case 'offer':
+              case 'listing':
+              case 'like':
+              case 'new_listing':
+                if (data.listingId || data.listing_id) {
+                  window.location.href = `/listing/${data.listingId || data.listing_id}`;
+                }
+                break;
+              case 'payment':
+                window.location.href = '/transactions';
+                break;
+              case 'follower':
+                window.location.href = data.userId 
+                  ? `/seller/${data.userId}` 
+                  : '/profile';
+                break;
+              default:
+                break;
             }
           }
-        );
+        });
 
-        // Enregistrer pour les notifications push
-        await PushNotifications.register();
+        // Obtenir le token FCM (ceci déclenche automatiquement la conversion APNs -> FCM sur iOS)
+        const tokenResult = await FirebaseMessaging.getToken();
+        console.log(`FCM Token obtained (${platform}):`, tokenResult.token);
+        setPushToken(tokenResult.token);
+        setIsRegistered(true);
+        await saveTokenToDatabase(tokenResult.token);
 
       } catch (error) {
         console.error('Error initializing push notifications:', error);
@@ -144,7 +138,7 @@ export const usePushNotifications = () => {
 
     // Cleanup
     return () => {
-      PushNotifications.removeAllListeners();
+      FirebaseMessaging.removeAllListeners();
     };
   }, [isNative, platform, saveTokenToDatabase]);
 
@@ -159,7 +153,9 @@ export const usePushNotifications = () => {
           .eq('id', user.id);
       }
 
-      await PushNotifications.removeAllListeners();
+      // Supprimer le token FCM
+      await FirebaseMessaging.deleteToken();
+      await FirebaseMessaging.removeAllListeners();
       setIsRegistered(false);
       setPushToken(null);
     } catch (error) {
@@ -171,12 +167,16 @@ export const usePushNotifications = () => {
     if (!isNative) return false;
 
     try {
-      const permission = await PushNotifications.requestPermissions();
+      const permission = await FirebaseMessaging.requestPermissions();
       const granted = permission.receive === 'granted';
       setPermissionStatus(granted ? 'granted' : 'denied');
       
       if (granted && !isRegistered) {
-        await PushNotifications.register();
+        const tokenResult = await FirebaseMessaging.getToken();
+        console.log(`FCM Token obtained after permission (${platform}):`, tokenResult.token);
+        setPushToken(tokenResult.token);
+        setIsRegistered(true);
+        await saveTokenToDatabase(tokenResult.token);
       }
       
       return granted;
