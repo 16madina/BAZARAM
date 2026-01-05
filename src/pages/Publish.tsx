@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BottomNav from "@/components/BottomNav";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { PublishTutorial } from "@/components/onboarding/PublishTutorial";
+import { PublicationRulesDialog } from "@/components/onboarding/PublicationRulesDialog";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { LocationAutocomplete } from "@/components/listing/LocationAutocomplete";
 import { NeighborhoodAutocomplete } from "@/components/listing/NeighborhoodAutocomplete";
@@ -27,6 +28,8 @@ const Publish = () => {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [parentCategoryId, setParentCategoryId] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showRulesDialog, setShowRulesDialog] = useState(false);
+  const [rulesAccepted, setRulesAccepted] = useState(false);
   const { firstPublishCompleted, completeFirstPublish } = useOnboarding();
   
   const [formData, setFormData] = useState({
@@ -325,6 +328,17 @@ const Publish = () => {
       });
       return;
     }
+
+    // Afficher le dialog des règles si pas encore accepté
+    if (!rulesAccepted) {
+      setShowRulesDialog(true);
+      return;
+    }
+
+    await performSubmission();
+  };
+
+  const performSubmission = async () => {
 
     // Check for banned words before submission
     try {
@@ -817,6 +831,16 @@ const Publish = () => {
       <PublishTutorial
         active={!firstPublishCompleted}
         onComplete={completeFirstPublish}
+      />
+
+      <PublicationRulesDialog
+        open={showRulesDialog}
+        onAccept={() => {
+          setRulesAccepted(true);
+          setShowRulesDialog(false);
+          performSubmission();
+        }}
+        onCancel={() => setShowRulesDialog(false)}
       />
       
       <BottomNav />
