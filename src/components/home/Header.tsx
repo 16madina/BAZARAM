@@ -127,12 +127,12 @@ const Header = ({
     requestLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-safe">
-      <div className="container flex h-12 sm:h-16 items-center justify-between px-4">
+  return <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pt-[env(safe-area-inset-top,0px)]">
+      <div className="container flex h-14 sm:h-16 items-center justify-between px-4">
         {/* Top row: Logo + Actions */}
         <div className="flex items-center justify-between w-full sm:w-auto">
           <div className="flex flex-col justify-center">
-            <img src={ayokaLogo} alt="AYOKA MARKET" className="h-7 sm:h-12 w-auto cursor-pointer transition-all duration-300 hover:scale-105 object-contain dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" onClick={() => navigate("/")} />
+            <img src={ayokaLogo} alt="AYOKA MARKET" className="h-10 sm:h-12 w-auto cursor-pointer transition-all duration-300 hover:scale-105 object-contain dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" onClick={() => navigate("/")} />
             {/* Location directly below logo on mobile */}
             {userLocation && !isLoadingLocation && (
               <div className="flex sm:hidden items-center gap-1 text-[10px] text-muted-foreground -mt-1">
@@ -160,17 +160,17 @@ const Header = ({
           {/* Actions on mobile - shown inline with logo */}
           <nav className="flex sm:hidden items-center gap-2">
             <Button variant="ghost" size="sm" onClick={toggleDarkMode} className="gap-2 min-h-[44px] min-w-[44px] p-2" aria-label="Changer de thème">
-              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
             {isAuthenticated && <SystemNotifications />}
             {isAuthenticated ? <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="gap-2 p-2">
-                <User className="h-4 w-4" />
+                <User className="h-5 w-5" />
               </Button> : <Button variant="default" size="sm" onClick={() => navigate("/auth", {
             state: {
               mode: 'login'
             }
           })} className="gap-2 text-xs px-3">
-                <LogIn className="h-4 w-4" />
+                <LogIn className="h-5 w-5" />
                 Se connecter
               </Button>}
           </nav>
