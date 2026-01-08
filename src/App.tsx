@@ -60,38 +60,54 @@ const queryClient = new QueryClient();
 const NotificationNavigationHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [hasHandledNotification, setHasHandledNotification] = useState(false);
 
   useEffect(() => {
-    if (hasHandledNotification) return;
+    // Check for pending notification route
+    const checkPendingRoute = () => {
+      let pendingRoute: string | null = null;
+      
+      try {
+        pendingRoute = sessionStorage.getItem("pendingNotificationRoute");
+      } catch {
+        pendingRoute = null;
+      }
 
-    // Check for pending notification route after a short delay to ensure app is ready
-     const checkPendingRoute = () => {
-       let pendingRoute: string | null = null;
-       try {
-         pendingRoute = sessionStorage.getItem("pendingNotificationRoute");
-       } catch {
-         pendingRoute = null;
-       }
+      // Also check the module-level variable
+      pendingRoute = pendingRoute || getPendingNotificationRoute();
 
-       pendingRoute = pendingRoute || getPendingNotificationRoute();
+      if (pendingRoute && pendingRoute !== location.pathname) {
+        console.log("📍 Navigating to pending notification route:", pendingRoute);
+        try {
+          sessionStorage.removeItem("pendingNotificationRoute");
+        } catch {
+          // ignore
+        }
+        navigate(pendingRoute, { replace: true });
+      }
+    };
 
-       if (pendingRoute && pendingRoute !== location.pathname) {
-         console.log("📍 Handling pending notification navigation to:", pendingRoute);
-         try {
-           sessionStorage.removeItem("pendingNotificationRoute");
-         } catch {
-           // ignore
-         }
-         setHasHandledNotification(true);
-         navigate(pendingRoute);
-       }
-     };
+    // Check immediately
+    checkPendingRoute();
 
-    // Wait for app to be fully loaded before navigating
-    const timer = setTimeout(checkPendingRoute, 300);
-    return () => clearTimeout(timer);
-  }, [navigate, location.pathname, hasHandledNotification]);
+    // Also check after a delay for cold start scenarios
+    const timer = setTimeout(checkPendingRoute, 500);
+    
+    // Set up an interval to keep checking for a short period (for slow cold starts)
+    let checkCount = 0;
+    const interval = setInterval(() => {
+      checkCount++;
+      if (checkCount >= 5) {
+        clearInterval(interval);
+        return;
+      }
+      checkPendingRoute();
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [navigate, location.pathname]);
 
   return null;
 };
