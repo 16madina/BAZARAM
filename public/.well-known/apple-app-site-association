@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "TEAM_ID.com.ayoka.market",
+        "appID": "6XW2XM3NDF.com.ayoka.market",
         "paths": [
           "/",
           "/referral",
@@ -20,7 +20,7 @@
   },
   "webcredentials": {
     "apps": [
-      "TEAM_ID.com.ayoka.market"
+      "6XW2XM3NDF.com.ayoka.market"
     ]
   }
 }
