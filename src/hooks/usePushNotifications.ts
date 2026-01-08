@@ -48,6 +48,9 @@ const getRouteFromNotificationData = (data: Record<string, string> | undefined):
   return null;
 };
 
+// Track if already initialized to prevent duplicate listeners
+let isInitialized = false;
+
 export const usePushNotifications = () => {
   const [pushToken, setPushToken] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -86,8 +89,15 @@ export const usePushNotifications = () => {
     }
 
     let unsubscribeAuth: (() => void) | null = null;
+    let isMounted = true;
 
     const initializePushNotifications = async () => {
+      // Prevent duplicate initialization
+      if (isInitialized) {
+        console.log('⏭️ FCM already initialized, skipping...');
+        return;
+      }
+
       try {
         console.log('🔄 Loading @capacitor-firebase/messaging module...');
         
@@ -105,13 +115,21 @@ export const usePushNotifications = () => {
           return;
         }
 
+        if (!isMounted) return;
+
         console.log('👤 User logged in, initializing FCM push notifications for:', user.email);
+
+        // Mark as initialized BEFORE adding listeners
+        isInitialized = true;
+
+        // Remove any existing listeners first
+        await FirebaseMessaging.removeAllListeners();
 
         // Check current permission status using FirebaseMessaging
         console.log('🔍 Calling FirebaseMessaging.checkPermissions()...');
         const permStatus = await FirebaseMessaging.checkPermissions();
         console.log('📋 FCM permission status:', permStatus.receive);
-        setPermissionStatus(permStatus.receive as 'prompt' | 'granted' | 'denied');
+        if (isMounted) setPermissionStatus(permStatus.receive as 'prompt' | 'granted' | 'denied');
         
         if (permStatus.receive === 'denied') {
           console.log('❌ Notifications denied by user');
@@ -122,20 +140,22 @@ export const usePushNotifications = () => {
           console.log('🔔 Requesting FCM notification permissions...');
           const permission = await FirebaseMessaging.requestPermissions();
           console.log('📋 FCM permission result:', permission.receive);
-          setPermissionStatus(permission.receive as 'prompt' | 'granted' | 'denied');
+          if (isMounted) setPermissionStatus(permission.receive as 'prompt' | 'granted' | 'denied');
           
           if (permission.receive !== 'granted') {
             return;
           }
         }
 
-        setPermissionStatus('granted');
+        if (isMounted) setPermissionStatus('granted');
 
         // Listen for FCM token changes
         await FirebaseMessaging.addListener('tokenReceived', async (event: { token: string }) => {
           console.log(`FCM Token received (${platform}):`, event.token);
-          setPushToken(event.token);
-          setIsRegistered(true);
+          if (isMounted) {
+            setPushToken(event.token);
+            setIsRegistered(true);
+          }
           await saveTokenToDatabase(event.token);
         });
 
@@ -187,21 +207,28 @@ export const usePushNotifications = () => {
           console.warn('⚠️ Token seems too short - might be APNs token instead of FCM token!');
         }
         
-        setPushToken(tokenResult.token);
-        setIsRegistered(true);
+        if (isMounted) {
+          setPushToken(tokenResult.token);
+          setIsRegistered(true);
+        }
         await saveTokenToDatabase(tokenResult.token);
 
       } catch (error: any) {
         console.error('❌ Error initializing FCM push notifications:', error?.message || error?.code || JSON.stringify(error) || error);
         if (error?.stack) console.error('Stack:', error.stack);
+        // Reset initialized flag on error so it can retry
+        isInitialized = false;
       }
     };
 
     // Listen for auth changes to initialize notifications after login
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
+      if (event === 'SIGNED_IN' && session?.user && !isInitialized) {
         console.log('User signed in, initializing FCM push notifications');
         initializePushNotifications();
+      } else if (event === 'SIGNED_OUT') {
+        // Reset on sign out so it can reinitialize on next sign in
+        isInitialized = false;
       }
     });
     unsubscribeAuth = () => subscription.unsubscribe();
@@ -211,10 +238,8 @@ export const usePushNotifications = () => {
 
     // Cleanup
     return () => {
+      isMounted = false;
       unsubscribeAuth?.();
-      if (FirebaseMessaging) {
-        FirebaseMessaging.removeAllListeners();
-      }
     };
   }, [isNative, platform, saveTokenToDatabase]);
 
