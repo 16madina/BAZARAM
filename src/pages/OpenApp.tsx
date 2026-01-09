@@ -43,8 +43,8 @@ const OpenApp = () => {
   const queryParams = refCode ? `?ref=${encodeURIComponent(refCode)}` : "";
 
   // URLs
-  const appStoreUrl = `https://apps.apple.com/app/id${APP_STORE_ID}`;
-  const playStoreUrl = `https://play.google.com/store/apps/details?id=${PLAY_STORE_ID}`;
+  const appStoreUrl = "https://apps.apple.com/us/app/ayoka/id6756237345";
+  const playStoreUrl = "https://play.google.com/store/apps/details?id=com.ayoka.market";
 
   // Custom scheme: ayokamarket://listing/123?ref=CODE (no leading slash)
   const schemePath = targetPath.replace(/^\/+/, "");
