@@ -29,7 +29,7 @@ const Download = () => {
         <img 
           src={ayokaLogo} 
           alt="AYOKA" 
-          className="w-24 h-24 object-contain"
+          className="w-40 h-40 object-contain"
         />
 
         {/* Title */}
