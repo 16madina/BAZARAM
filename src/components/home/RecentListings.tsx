@@ -307,10 +307,13 @@ const RecentListings = () => {
   // - Puis par proximité (même ville > même pays > pays voisins > autres)
   // - Utilisateurs sans localisation: ordre chronologique par défaut
   const isAuthenticated = !!session?.user;
-  const userCity = userProfile?.city || guestLocation.city || null;
-  const userCountry = userProfile?.country || guestLocation.country || null;
+  // Treat empty strings as null
+  const rawCity = userProfile?.city || guestLocation.city || null;
+  const rawCountry = userProfile?.country || guestLocation.country || null;
+  const userCity = rawCity?.trim() ? rawCity.trim() : null;
+  const userCountry = rawCountry?.trim() ? rawCountry.trim() : null;
   
-  const hasValidLocation = !!(userCity?.trim() || userCountry?.trim());
+  const hasValidLocation = !!(userCity || userCountry);
   
   // DEBUG: Log pour vérifier les valeurs
   console.log('🔍 DEBUG Sorting - userCity:', userCity, '| userCountry:', userCountry, '| hasValidLocation:', hasValidLocation, '| profile:', userProfile);
